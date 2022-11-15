@@ -172,8 +172,11 @@ public class App {
         SelectBook(books, lambda, fileN);
 
 //        3/ Выбрать книги объемом от 0 до 100 стр - сохранить в отдельный docx файл
-
+        lambda = (el ->el.getNum_pages()>0 && el.getNum_pages()<100);
+        fileN = "src/main/resources/List_books3.docx";
+        SelectBook(books, lambda, fileN);
 //        4/ Выбрать книги объемом от 101 до 101 стр - сохранить в отдельный docx файл
+
 //        5/ Выбрать все книги выпущенные с 01/01/2005 до настоящего времени написанные на французком языке - сохранить в отдельный файл.
 
 
