@@ -1,19 +1,15 @@
 package org.example;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.Units;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -123,7 +120,7 @@ public class App {
         return books;
     }
 
-    public static void writeToExcel(List<Book> books, String fileName) {
+    public static void writeToWord(List<Book> books, String fileName) {
 
         XWPFDocument document = new XWPFDocument();
         document.getParagraphs();
@@ -163,17 +160,35 @@ public class App {
         }
         System.out.println("считали записей: " + books.size());
 
-        /*
-        1/ Выбрать книги с рейтингом от 4,5 до 5 - сохранить в отдельны docx файл
-        2/ Выбрать книги с рейтингом от 4,4 до 4 - сохранить в отдельны docx файл
-        3/ Выбрать книги объемом от 0 до 100 стр - сохранить в отдельный docx файл
-        4/ Выбрать книги объемом от 101 до 101 стр - сохранить в отдельный docx файл
-        5/ Выбрать все книги выпущенные с 01/01/2005 до настоящего времени написанные на французком языке - сохранить в отдельный файл.
-         */
-        List<Book> l1 = books.stream().filter(el ->el.getAverage_rating()>4.5 && el.getAverage_rating()<5).collect(Collectors.toList());
-        String fileN = "src/main/resources/List_books.docx";
-        writeToExcel(books, fileN);
-        String file1 = "src/main/resources/List_books1.docx";
-        writeToExcel(l1, file1);
+//        1/ Выбрать книги с рейтингом от 4,5 до 5 - сохранить в отдельны docx файл
+
+        Predicate<Book> lambda = (el ->el.getAverage_rating()>4.5 && el.getAverage_rating()<5);
+        String fileN = "src/main/resources/List_books1.docx";
+        SelectBook(books, lambda, fileN);
+
+//        2/ Выбрать книги с рейтингом от 4,4 до 4 - сохранить в отдельны docx файл
+        lambda = (el ->el.getAverage_rating()>4.0 && el.getAverage_rating()<4.5);
+        fileN = "src/main/resources/List_books2.docx";
+        SelectBook(books, lambda, fileN);
+
+//        3/ Выбрать книги объемом от 0 до 100 стр - сохранить в отдельный docx файл
+
+//        4/ Выбрать книги объемом от 101 до 101 стр - сохранить в отдельный docx файл
+//        5/ Выбрать все книги выпущенные с 01/01/2005 до настоящего времени написанные на французком языке - сохранить в отдельный файл.
+
+
     }
+    public static void SelectBook(List<Book> books, Predicate<Book> lambda, String fileN){
+        List<Book> l1 = books.stream().filter(lambda).collect(Collectors.toList());
+        //String fileN = "src/main/resources/List_books.docx";
+        writeToWord(books, fileN);
+        String file1 = "src/main/resources/List_books1.docx";
+        writeToWord(l1, file1);
+        System.out.println("Записали файл: "+fileN);
+
+    }
+
 }
+//interface Expression{
+//    boolean isEqual(Book n);
+//}
