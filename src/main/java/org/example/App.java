@@ -13,6 +13,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,15 +64,17 @@ public class App {
                         id = ((int) cell.getNumericCellValue());
                     }
                     if (j == 1) {
-                        readBook.setTitle(cell.getStringCellValue());
+                        readBook.setTitle(cell.getStringCellValue().trim());
                     }
                     if (j == 2) {
-                        readBook.setAuthors(cell.getStringCellValue());
+                        readBook.setAuthors(cell.getStringCellValue().trim());
                     }
                     if (j == 3) {
                         readBook.setAverage_rating((float) cell.getNumericCellValue());
                     }
-
+                    if (j == 6) {
+                        readBook.setLanguage_code (cell.getStringCellValue().trim());
+                    }
                     if (j == 7) {
                         readBook.setNum_pages((int) cell.getNumericCellValue());
                     }
@@ -81,7 +84,7 @@ public class App {
                             format.applyPattern("dd.MM.yyyy");
                             Date docDate= format.parse(s);
                              */
-                        String dateS = cell.getStringCellValue();
+                        String dateS = cell.getStringCellValue().trim();
                         SimpleDateFormat format = new SimpleDateFormat();
                         format.applyPattern("M/dd/yyyy");
                         Date pubDate = format.parse(dateS);
@@ -177,10 +180,13 @@ public class App {
         SelectBook(books, lambda, fileN);
 //        4/ Выбрать книги объемом от 101 до 101 стр - сохранить в отдельный docx файл
         lambda = (el ->el.getNum_pages()>101 && el.getNum_pages()<1001);
-        fileN = "src/main/resources/List_books.docx";
+        fileN = "src/main/resources/List_books4.docx";
         SelectBook(books, lambda, fileN);
 //        5/ Выбрать все книги выпущенные с 01/01/2005 до настоящего времени написанные на французком языке - сохранить в отдельный файл.
-
+        LocalDate date = LocalDate.of(2005, 1, 1);
+        lambda = (el ->el.getPublication_date().isAfter(date) && el.getLanguage_code()=="fre");
+        fileN = "src/main/resources/List_books5.docx";
+        SelectBook(books, lambda, fileN);
 
     }
     public static void SelectBook(List<Book> books, Predicate<Book> lambda, String fileN){
